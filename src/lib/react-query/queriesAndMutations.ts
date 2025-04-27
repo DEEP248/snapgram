@@ -148,13 +148,14 @@ export const useDeletePost = () => {
 export const useGetPosts = () => {
   return useInfiniteQuery({
     queryKey: [QUERY_KEYS.GET_INFINITE_POSTS],
-    queryFn: getInfinitePosts,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    queryFn: ({ pageParam }) => getInfinitePosts({pageParam : pageParam as any}),
+    initialPageParam: undefined as string | undefined, // Changed from null to undefined with proper typing
     getNextPageParam: (lastPage) => {
       // If there's no data, there are no more pages.
       if (lastPage && lastPage.documents.length === 0) {
-        return null;
+        return undefined; // Changed from null to undefined
       }
-
       // Use the $id of the last document as the cursor.
       const lastId = lastPage?.documents[lastPage.documents.length - 1].$id;
       return lastId;
